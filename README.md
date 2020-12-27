@@ -1,24 +1,38 @@
-# README
+# Rails Cloud Run Sandbox
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Setup:
 
-Things you may want to cover:
+```
+gcloud auth login
+gcloud auth configure-docker
+gcloud config set project [gcp-project-id]
+```
 
-* Ruby version
+Build image:
 
-* System dependencies
+```
+docker build -t rails-cloudrun-sandbox .
+```
 
-* Configuration
+Run locally:
 
-* Database creation
+```
+docker run --rm -it -p 3000:3000 -e PORT=3000 rails-cloudrun-sandbox
+```
 
-* Database initialization
+Push to GCR:
 
-* How to run the test suite
+```
+docker tag rails-cloudrun-sandbox gcr.io/[gcp-project-id]/rails-cloudrun-sandbox
+docker push gcr.io/[gcp-project-id]/rails-cloudrun-sandbox
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+Deploy to Cloud Run:
 
-* Deployment instructions
-
-* ...
+```
+gcloud run deploy rails-cloudrun-sandbox \
+    --platform managed \
+    --image gcr.io/[gcp-project-id]/rails-cloudrun-sandbox \
+    --allow-unauthenticated \
+    --region asia-northeast2
+```
